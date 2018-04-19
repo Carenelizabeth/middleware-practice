@@ -68,20 +68,25 @@ function gateKeeper(req, res, next) {
   const headerObj = {
     username: req.get('x-username-and-password')
   }
-  console.log(headerObj);
+
+  const headerInfo = queryString.parse(headerObj.username)
+  let user = headerInfo.user;
+  const pass = headerInfo.pass;
+  console.log(user);
+  console.log(pass);
   
-  const pretendObj = {
-    username: "user=joeschmoe@business.com&pass=password"
+for (let i=0; i < USERS.length; i++){
+  if (user === USERS[i].userName && pass === USERS[i].password){
+    console.log("found it");
+    req.user = USERS[i];
   }
-  const headerInfo = queryString.parse(pretendObj.username)
-  console.log(headerInfo);
-  
+  }
   
   next();
 }
 
 // Add the middleware to your app!
-app.all('/', gateKeeper);
+app.use(gateKeeper);
 // this endpoint returns a json object representing the user making the request,
 // IF they supply valid user credentials. This endpoint assumes that `gateKeeper` 
 // adds the user object to the request if valid credentials were supplied.
